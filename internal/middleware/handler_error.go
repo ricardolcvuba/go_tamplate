@@ -21,10 +21,9 @@ func HandlerError() gin.HandlerFunc {
 		var appErr apperror.AppError
 		if errors.As(last.Err, &appErr) {
 			c.AbortWithStatusJSON(appErr.Code, gin.H{
-				"code":       appErr.Code,
-				"message":    appErr.Message,
-				"status":     appErr.Status,
-				"request_id": c.GetString("request_id"),
+				"code":    appErr.Code,
+				"message": appErr.Message,
+				"status":  appErr.Status,
 			})
 			return
 		}
@@ -32,10 +31,9 @@ func HandlerError() gin.HandlerFunc {
 		// fallback genérico a 500 si no es un AppError tipado
 		fallback := apperror.FromCode(http.StatusInternalServerError, last.Err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"code":       fallback.Code,
-			"message":    fallback.Message,
-			"status":     fallback.Status,
-			"request_id": c.GetString("request_id"),
+			"code":    fallback.Code,
+			"message": fallback.Message,
+			"status":  fallback.Status,
 		})
 	}
 }
