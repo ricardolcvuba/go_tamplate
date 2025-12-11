@@ -1,17 +1,20 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"go_template/internal/config"
+	"go_template/internal/model"
+	"go_template/internal/server"
+	"log"
 )
 
 func main() {
-	r := gin.Default()
+	config := config.GetConfig()
+	db, err := model.ConnectDB(config.DatabaseURL)
+	if err != nil {
+		log.Println("Connection refused to database")
+		panic(err)
+	}
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.Run(":8080")
+	r := server.NewRouter(db)
+	r.Run(":" + config.Port)
 }
