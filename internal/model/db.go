@@ -26,3 +26,9 @@ func ConnectDB(databaseURL string) (*gorm.DB, error) {
 
 	return db, nil
 }
+
+func MigrateSchemas(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&User{},
+	)
+}
