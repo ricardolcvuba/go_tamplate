@@ -2,15 +2,15 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: appdb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d appdb"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$DATABASE_NAME"]
       interval: 3s
       timeout: 5s
       retries: 5
@@ -20,12 +20,14 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/appdb?sslmode=disable
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${DATABASE_NAME}?sslmode=disable
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "8080:8080"
+    env_file:
+      - .env
 
 volumes:
   db_data:
