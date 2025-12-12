@@ -10,6 +10,9 @@ import (
 func main() {
 	config := config.GetConfig()
 	db, err := model.ConnectDB(config.DatabaseURL)
+
+	model.MigrateSchemas(db)
+
 	if err != nil {
 		log.Println("Connection refused to database")
 		panic(err)
